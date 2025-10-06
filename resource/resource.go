@@ -53,6 +53,8 @@ type Resource struct {
 	ShardID           string `json:"shard_id"`
 	KillTimestamp     string
 	DeletionTimestamp string `json:"deletion_timestamp"`
+	CreatedAt         string `json:"created_at"`
+	UpdatedAt         string `json:"updated_at"`
 	Generation        int64
 	Finalizers        []string          `json:"finalizers"`
 	Annotations       map[string]string `json:"annotations"`
