@@ -210,6 +210,34 @@ func TestFormatAndParseLabelSelectors(t *testing.T) {
 			},
 		},
 		{
+			name: "with two label selectors value",
+			labelSelectors: []LabelSelector{
+				{
+					Key:      "team",
+					Operator: LabelSelectorOperatorIn,
+					Values:   []string{"network"},
+				},
+				{
+					Key:      "data",
+					Operator: LabelSelectorOperatorIn,
+					Values:   []string{"network", "shadow"},
+				},
+			},
+			wantFormatted: "team in (network),data in (network,shadow)",
+			wantParsed: []LabelSelector{
+				{
+					Key:      "team",
+					Operator: LabelSelectorOperatorIn,
+					Values:   []string{"network"},
+				},
+				{
+					Key:      "data",
+					Operator: LabelSelectorOperatorIn,
+					Values:   []string{"network", "shadow"},
+				},
+			},
+		},
+		{
 			name:            "parse legacy empty values format",
 			labelSelectors:  []LabelSelector{{Key: "team", Operator: LabelSelectorOperatorIn, Values: []string{""}}},
 			selectorToParse: "team in ()",
@@ -219,6 +247,42 @@ func TestFormatAndParseLabelSelectors(t *testing.T) {
 					Key:      "team",
 					Operator: LabelSelectorOperatorIn,
 					Values:   []string{""},
+				},
+			},
+		},
+		{
+			name: "values with parentheses are quoted and round-trip",
+			labelSelectors: []LabelSelector{
+				{
+					Key:      "team",
+					Operator: LabelSelectorOperatorIn,
+					Values:   []string{"(", "shadow"},
+				},
+			},
+			wantFormatted: `team in ("(",shadow)`,
+			wantParsed: []LabelSelector{
+				{
+					Key:      "team",
+					Operator: LabelSelectorOperatorIn,
+					Values:   []string{"(", "shadow"},
+				},
+			},
+		},
+		{
+			name: "operator keywords can be values",
+			labelSelectors: []LabelSelector{
+				{
+					Key:      "test",
+					Operator: LabelSelectorOperatorIn,
+					Values:   []string{"in", "notin"},
+				},
+			},
+			wantFormatted: `test in (in,notin)`,
+			wantParsed: []LabelSelector{
+				{
+					Key:      "test",
+					Operator: LabelSelectorOperatorIn,
+					Values:   []string{"in", "notin"},
 				},
 			},
 		},
